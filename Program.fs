@@ -24,13 +24,13 @@ module private AnalogClockModule =
 
    let private CLOCK_X = CLOCK_SIZE * 1.1 |> int            //Defines the clock face's horizontal center in pixels.
    let private CLOCK_Y = CLOCK_SIZE * 1.1 |> int            //Defines the clock face's vertical center in pixels.
+   let private DEGREES_PER_RADIAN = 180.0 / Math.PI         //Defines the number of degrees per radian.
    let private HOUR_HAND_LENGTH = CLOCK_SIZE / 1.6          //Defines the hour hand's length.
    let private LARGE_MARK_LENGTH = HOUR_HAND_LENGTH / 2.5   //Defines the size of the marking's used to mark every third hour.
    let private MINUTE_HAND_LENGTH = HOUR_HAND_LENGTH * 1.5  //Defines the minutes hand's length.
    let private SECOND_HAND_LENGTH = HOUR_HAND_LENGTH * 1.5  //Defines the seconds hand's length.
    let private SMALL_MARK_LENGTH = LARGE_MARK_LENGTH / 2.0  //Defines the size of the marking's used to mark the hours.
-   let private TO_RADIANS = 180.0 / Math.PI                 //Defines the value used to convert degrees to radians.
-
+   
    //This record defines the time displayed by the clock.
    type private TimeRec =
       {
@@ -100,14 +100,14 @@ module private AnalogClockModule =
          Canvas.DrawLine(new Pen(Me.BackColor, CLOCK_LINE_WIDTH), CLOCK_X, CLOCK_Y, SecondHandX, SecondHandY)
 
          for HourOnFace = 0 to 11 do
-            let HourAsRadians = (((HourOnFace * HOURS_TO_DEGREES) + TWELVE_HOUR_ANGLE) |> float) / TO_RADIANS
+            let HourAsRadians = (((HourOnFace * HOURS_TO_DEGREES) + TWELVE_HOUR_ANGLE) |> float) / DEGREES_PER_RADIAN
             let MarkLength = if HourOnFace % LARGE_MARK_INTERVAL = 0 then LARGE_MARK_LENGTH else SMALL_MARK_LENGTH            
             Canvas.DrawLine(new Pen(Color.Yellow, CLOCK_LINE_WIDTH), ((Math.Cos(HourAsRadians) * CLOCK_SIZE) |> int) + CLOCK_X, ((Math.Sin(HourAsRadians) * CLOCK_SIZE) |> int) + CLOCK_Y, ((Math.Cos(HourAsRadians) * (CLOCK_SIZE - MarkLength)) |> int) + CLOCK_X, ((Math.Sin(HourAsRadians) * (CLOCK_SIZE - MarkLength)) |> int) + CLOCK_Y)
             Canvas.DrawEllipse(new Pen(Color.Blue, CLOCK_LINE_WIDTH), 12, 12, (CLOCK_SIZE |> int) * 2, (CLOCK_SIZE |> int) * 2)
 
-         let HourAsRadians = ((((displayedTime.Hour |> float) + ((displayedTime.Minute |> float) * MINUTES_TO_FRACTION)) * (HOURS_TO_DEGREES |> float))+ (TWELVE_HOUR_ANGLE |> float)) / TO_RADIANS
-         let SecondAsRadians = (((displayedTime.Second * SECONDS_TO_DEGREES) + TWELVE_HOUR_ANGLE) |> float) / TO_RADIANS
-         let MinuteAsRadians = (((displayedTime.Minute * MINUTES_TO_DEGREES) + TWELVE_HOUR_ANGLE) |> float) / TO_RADIANS
+         let HourAsRadians = ((((displayedTime.Hour |> float) + ((displayedTime.Minute |> float) * MINUTES_TO_FRACTION)) * (HOURS_TO_DEGREES |> float))+ (TWELVE_HOUR_ANGLE |> float)) / DEGREES_PER_RADIAN
+         let SecondAsRadians = (((displayedTime.Second * SECONDS_TO_DEGREES) + TWELVE_HOUR_ANGLE) |> float) / DEGREES_PER_RADIAN
+         let MinuteAsRadians = (((displayedTime.Minute * MINUTES_TO_DEGREES) + TWELVE_HOUR_ANGLE) |> float) / DEGREES_PER_RADIAN
 
          HourHandX <- (((Math.Cos(HourAsRadians) * HOUR_HAND_LENGTH) |> int) + CLOCK_X)
          HourHandY <- (((Math.Sin(HourAsRadians) * HOUR_HAND_LENGTH)  |> int) + CLOCK_Y)
